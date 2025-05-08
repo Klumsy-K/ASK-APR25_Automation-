@@ -84,6 +84,7 @@ Feature: Test Set : Registration - Password / Confirm
     When I type <text> into element with xpath "//input[@formcontrolname='password']"
     And I type <text> into element with xpath "//input[@formcontrolname='confirmPassword']"
     When I click on element with xpath "//button[@type='submit']"
+    And I wait for 1 sec
     Then element with xpath "//mat-error" should contain text <error>
     And I wait for 3 sec
     Then element with xpath "//mat-card[@class='mat-card']" should not contain text "You have been Registered"
@@ -102,6 +103,7 @@ Feature: Test Set : Registration - Password / Confirm
     When I type <pass> into element with xpath "//input[@formcontrolname='password']"
     And I type <confirm> into element with xpath "//input[@formcontrolname='confirmPassword']"
     When I click on element with xpath "//button[@type='submit']"
+    And I wait for 1 sec
     Then element with xpath "//mat-error" should contain text "Entered passwords should match"
     And I wait for 3 sec
     Then element with xpath "//mat-card[@class='mat-card']" should not contain text "You have been Registered"
