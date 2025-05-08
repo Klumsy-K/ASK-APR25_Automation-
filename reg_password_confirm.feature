@@ -24,6 +24,7 @@ Feature: Test Set : Registration - Password / Confirm
     And I type "Ss125!@&" into element with xpath "//input[@formcontrolname='confirmPassword']"
     When I click on element with xpath "//button[@type='submit']"
     Then I wait for element with xpath "//h4[contains(text(),'You have been Registered')]" to be present
+    And element with xpath "//h4[contains(text(),'You have been Registered')]" should be displayed
 
 
   @reg_password_confirm2
@@ -31,7 +32,8 @@ Feature: Test Set : Registration - Password / Confirm
 
     When I type "Ss125!@&" into element with xpath "//input[@formcontrolname='confirmPassword']"
     And I click on element with xpath "//button[@type='submit']"
-    Then element with xpath "//input[@formcontrolname='password']/../../..//mat-error" should contain text "field is required"
+    And I wait for 1 sec
+    Then element with xpath "//mat-error" should contain text "field is required"
 
   @reg_password_confirm3
   Scenario: Confirm Password field is required - cannot be empty
@@ -39,6 +41,7 @@ Feature: Test Set : Registration - Password / Confirm
     When I type "Ss125!@&" into element with xpath "//input[@formcontrolname='password']"
     And I click on element with xpath "//button[@type='submit']"
     And I wait for element with xpath "//input[@formcontrolname='confirmPassword']/../../..//mat-error" to be present
+    And I wait for 1 sec
     Then element with xpath "//input[@formcontrolname='confirmPassword']/../../..//mat-error[@role='alert']" should contain text "field is required"
 
   @reg_password_confirm4
@@ -47,7 +50,8 @@ Feature: Test Set : Registration - Password / Confirm
     When I type "Aa&@#123bB" into element with xpath "//input[@formcontrolname='password']"
     And I type "Ss125!@&" into element with xpath "//input[@formcontrolname='confirmPassword']"
     And I click on element with xpath "//button[@type='submit']"
-    Then element with xpath "//mat-error[text()='Entered passwords should match']" should be present
+    And I wait for 1 sec
+    Then element with xpath "//mat-error[text()='Entered passwords should match']" should be displayed
 
   @reg_password_confirm5
   Scenario: White spaces are not allowed
@@ -55,7 +59,8 @@ Feature: Test Set : Registration - Password / Confirm
     When I type "Ss125! @&" into element with xpath "//input[@formcontrolname='password']"
     And I type "Ss125! @&" into element with xpath "//input[@formcontrolname='confirmPassword']"
     And I click on element with xpath "//button[@type='submit']"
-    Then element with xpath "//mat-card[@class='mat-card']" should contain text "Whitespaces are not allowed"
+    And I wait for 1 sec
+    Then element with xpath "//mat-error" should contain text "Whitespaces are not allowed"
 
   @reg_password_confirm6
   Scenario Outline: (POS) Boundary Password length
@@ -63,6 +68,7 @@ Feature: Test Set : Registration - Password / Confirm
     When I type <text> into element with xpath "//input[@formcontrolname='password']"
     And I type <text> into element with xpath "//input[@formcontrolname='confirmPassword']"
     When I click on element with xpath "//button[@type='submit']"
+    And I wait for 1 sec
     Then I wait for element with xpath "//h4[contains(text(),'You have been Registered')]" to be present
 
     Examples:
@@ -78,15 +84,16 @@ Feature: Test Set : Registration - Password / Confirm
     When I type <text> into element with xpath "//input[@formcontrolname='password']"
     And I type <text> into element with xpath "//input[@formcontrolname='confirmPassword']"
     When I click on element with xpath "//button[@type='submit']"
-    Then element with xpath "//mat-card[@class='mat-card']" should contain text "maximum length of password should not exceed 32 characters"
+    Then element with xpath "//mat-error" should contain text <error>
     And I wait for 3 sec
     Then element with xpath "//mat-card[@class='mat-card']" should not contain text "You have been Registered"
 
-
     Examples:
-      | text                                |
-      | "S1s&"                              |
-      | "SsfghytTY1456478@GHJUU&GHgh145567" |
+      | text                                | error                            |
+      | "S1s&"                              | "at least 5 characters"          |
+      | "SsfghytTY1456478@GHJUU&GHgh145567" | "no more than 32 characters"     |
+
+#    known defect in case 2 (upper limit not enforced):   APR25-251
 
 
   @reg_password_confirm7
@@ -95,9 +102,9 @@ Feature: Test Set : Registration - Password / Confirm
     When I type <pass> into element with xpath "//input[@formcontrolname='password']"
     And I type <confirm> into element with xpath "//input[@formcontrolname='confirmPassword']"
     When I click on element with xpath "//button[@type='submit']"
-    And I wait for 1 sec
+    Then element with xpath "//mat-error" should contain text "Entered passwords should match"
+    And I wait for 3 sec
     Then element with xpath "//mat-card[@class='mat-card']" should not contain text "You have been Registered"
-    Then element with xpath "//mat-card[@class='mat-card']" should contain text "Entered passwords should match"
 
     Examples:
       | pass                    | confirm    |
@@ -105,9 +112,16 @@ Feature: Test Set : Registration - Password / Confirm
       | "Qwertyuio"             | "Qwerty"   |
       | "qWE123&^567!!!DFas!!!" | "qWE123&^" |
 
+    @red_password_confirm8
+      Scenario: Verify field 'type' attribute is 'password'
+
+      And element with xpath "//input[@formcontrolname='password']" should have attribute "type" as "password"
+      And element with xpath "//input[@formcontrolname='confirmPassword']" should have attribute "type" as "password"
+
+
   @reg_password_cleanup
 
-  Scenario: delete user John Snow, who knows nothing, reportedly
+  Scenario: Delete user John Snow, who knows nothing, reportedly
 
     Then I click on element with xpath "//span[contains(text(),'Back to Login')]"
     And I type "sandroshatki@bizisstance.com" into element with xpath "//input[@formcontrolname='email']"
