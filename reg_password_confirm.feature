@@ -38,6 +38,7 @@ Feature: Test Set : Registration - Password / Confirm
 
     When I type "Ss125!@&" into element with xpath "//input[@formcontrolname='password']"
     And I click on element with xpath "//button[@type='submit']"
+    And I wait for element with xpath "//input[@formcontrolname='confirmPassword']/../../..//mat-error" to be present
     Then element with xpath "//input[@formcontrolname='confirmPassword']/../../..//mat-error[@role='alert']" should contain text "field is required"
 
   @reg_password_confirm4
